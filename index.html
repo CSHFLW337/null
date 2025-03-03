@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSFW Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: black; color: white; }
+        #chatbox { width: 80%; height: 300px; overflow-y: scroll; border: 1px solid white; padding: 10px; margin: 10px auto; }
+        input, button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>NSFW Chatbot Prototype</h1>
+    
+    <h3>Create a Character</h3>
+    <input type="text" id="charName" placeholder="Character Name">
+    <input type="text" id="charPersonality" placeholder="Personality">
+    <button onclick="createCharacter()">Create</button>
+
+    <h3>Chat</h3>
+    <div id="chatbox"></div>
+    <input type="text" id="userMessage" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const apiUrl = "https://35d97259-e18f-4a93-9883-1a2073e5e1a5-00-1vfkp7qhrd0vq.kirk.replit.dev"; // Your Replit API
+
+        function createCharacter() {
+            let name = document.getElementById("charName").value;
+            let personality = document.getElementById("charPersonality").value;
+
+            fetch(apiUrl + "/create_character", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, personality })
+            })
+            .then(res => res.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error("Error:", error));
+        }
+
+        function sendMessage() {
+            let name = document.getElementById("charName").value;
+            let message = document.getElementById("userMessage").value;
+
+            fetch(apiUrl + "/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, message })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let chatbox = document.getElementById("chatbox");
+                chatbox.innerHTML += `<p><b>You:</b> ${message}</p>`;
+                chatbox.innerHTML += `<p><b>Bot:</b> ${data.response}</p>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
